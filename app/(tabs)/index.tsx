@@ -1,70 +1,129 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import Slider from '@react-native-community/slider'; 
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function PantallaInicio() {
+  const [saludo, setSaludo] = useState('Ingrese una frase motivacional');
+  const [entradaUsuario, setEntradaUsuario] = useState('');
+  const [textoMostrado, setTextoMostrado] = useState('');
+  const [colorFondo, setColorFondo] = useState('#fff');
+  const [tamanoFuente, setTamanoFuente] = useState(18); 
 
-export default function HomeScreen() {
+  const frasesPredefinidas = [
+    '"Cada fracaso enseña al individuo algo que necesitaba aprender". Charles Dickens.',
+    '"El que tiene fe en sí mismo no necesita que los demás crean en él". Miguel de Unamuno.',
+  ];
+
+  const colores = ['#ff9999', '#99ff99', '#9999ff', '#ffff99', '#ffcc99'];
+
+  const mostrarFraseAleatoria = () => {
+    const indiceAleatorio = Math.floor(Math.random() * frasesPredefinidas.length);
+    const fraseAleatoria = frasesPredefinidas[indiceAleatorio];
+    const frasesAMostrar = [fraseAleatoria, entradaUsuario];
+    const fraseMostrada = frasesAMostrar[Math.floor(Math.random() * frasesAMostrar.length)];
+    
+    setTextoMostrado(fraseMostrada);
+
+    const indiceColorAleatorio = Math.floor(Math.random() * colores.length);
+    setColorFondo(colores[indiceColorAleatorio]);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={[estilos.contenedor, { backgroundColor: colorFondo }]}>
+      <View style={estilos.encabezado}>
+        <Text style={estilos.textoEncabezado}>Fabian Cornejo</Text>
+        <Text style={estilos.textoEncabezado}>ISFT °220</Text>
+      </View>
+
+      <Text style={estilos.textoSaludo}>{saludo}</Text>
+
+      <TextInput
+        style={estilos.entrada}
+        placeholder="Frase:"
+        value={entradaUsuario}
+        onChangeText={setEntradaUsuario}
+      />
+      
+      <View style={estilos.contenedorCentrado}>
+        {textoMostrado ? (
+          <Text style={[estilos.frase, { fontSize: tamanoFuente }]}>{textoMostrado}</Text>
+        ) : null}
+
+        <Slider
+          style={estilos.slider}
+          minimumValue={15}
+          maximumValue={48}
+          step={1}
+          value={tamanoFuente}
+          onValueChange={setTamanoFuente}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Text style={estilos.textoSlider}>Tamaño de texto: {tamanoFuente}</Text>
+      </View>
+
+      <TouchableOpacity style={estilos.boton} onPress={mostrarFraseAleatoria}>
+        <Text style={estilos.textoBoton}>Mostrar Frase</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+const estilos = StyleSheet.create({
+  contenedor: {
+    flex: 1,
+    padding: 20, 
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  encabezado: {
     position: 'absolute',
+    top: 40, 
+    left: 20, 
+  },
+  textoEncabezado: {
+    fontSize: 26,
+  },
+  textoSaludo: {
+    fontSize: 28,
+    textAlign: 'center', 
+    marginVertical: 20, 
+  },
+  entrada: {
+    height: 40,
+    width: 150, 
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    alignSelf: 'center', 
+  },
+  contenedorCentrado: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center', 
+  },
+  frase: {
+    marginTop: 20,
+    textAlign: 'center', 
+    width: '100%', 
+  },
+  slider: {
+    width: 200,
+    height: 40,
+    marginTop: 20,
+  },
+  textoSlider: {
+    marginTop: 10,
+    fontSize: 16,
+  },
+  boton: {
+    backgroundColor: '#007bff', 
+    paddingVertical: 15, 
+    paddingHorizontal: 30, 
+    borderRadius: 5, 
+    alignSelf: 'flex-end',
+    marginBottom: 20, 
+  },
+  textoBoton: {
+    color: '#fff', 
+    fontSize: 22, 
+    textAlign: 'center',
   },
 });
